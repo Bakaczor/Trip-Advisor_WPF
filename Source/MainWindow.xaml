@@ -1,0 +1,173 @@
+﻿<Window x:Class="TripAdvisor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:TripAdvisor"
+        mc:Ignorable="d"
+        Title="TripAdvisor" MinHeight="600" MaxHeight="600" MinWidth="900" MaxWidth="900" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="Currencies" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Currency"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="DaysOfWeek" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:DayOfTheWeek"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        
+        <local:VisibilityConverter x:Key="VisibilityConverter"/>
+        <local:PathConverter x:Key="PathConverter"/>
+        <local:OpeningDaysConverter x:Key="OpeningDaysConverter"/>
+        <local:ListOfDaysConverter x:Key="ListOfDaysConverter"/>
+    </Window.Resources>
+
+    <!--
+        This Trip Advisor application was created as part of the course 
+        "Programming in a graphical environment" at the Warsaw University
+        of Techonology. The project is purely didactic - I do not claim
+        any rights to the Tripadvisor brand owned by the Liberty Media Corporation.
+    
+        Copyright (c) 2023 Bartosz Kaczorowski
+    
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+	    of this software and associated documentation files (the "Software"), to deal
+	    in the Software without restriction, including without limitation the rights
+	    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	    copies of the Software, and to permit persons to whom the Software is
+	    furnished to do so, subject to the following conditions:
+
+	    The above copyright notice and this permission notice shall be included in all
+	    copies or substantial portions of the Software.
+
+	    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	    SOFTWARE.
+    -->
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <GroupBox Grid.Column="0" Header="List">
+            <ListView Name="Names" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </GroupBox>
+        
+        <GroupBox Grid.Column="1">
+            <Grid DataContext="{Binding SelectedItem, ElementName=Names}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="300"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Image Grid.Column="0" Source="{Binding ImageName, Converter={StaticResource PathConverter}}" Stretch="Fill" Width="300" Height="300" Margin="3"/>
+                    
+                    <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            
+                            <GroupBox Header="Informacje ogólne">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Grid.Column="0">
+                                        <Label Content="Nazwa:"/>
+                                        <Label Content="Lokalizacja:"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <Label Content="{Binding Name}"/>
+                                        <Label Content="{Binding Localization}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="Dni">
+                                <Expander Header="{Binding OpeningDaysOfTheWeek, Converter={StaticResource ListOfDaysConverter}}">
+                                        <Expander.Content>
+                                            <StackPanel>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Wszystkie dni'}">Wszystkie dni</CheckBox>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Poniedziałek'}">Poniedziałek</CheckBox>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Wtorek'}">Wtorek</CheckBox>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Środa'}">Środa</CheckBox>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Czwartek'}">Czwartek</CheckBox>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Piątek'}">Piątek</CheckBox>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Sobota'}">Sobota</CheckBox>
+                                                <CheckBox IsEnabled="False" IsChecked="{Binding OpeningDaysOfTheWeek, Converter={StaticResource OpeningDaysConverter}, ConverterParameter='Niedziela'}">Niedziela</CheckBox>
+                                            </StackPanel>
+                                        </Expander.Content>
+                                    </Expander>
+                            </GroupBox>
+                            
+                            <GroupBox Header="Opłata">
+                                <StackPanel>
+                                    <CheckBox IsChecked="{Binding Free}">Wejście darmowe</CheckBox>
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding Free, Converter={StaticResource VisibilityConverter}}">
+                                        <Label Content="Opłata za wejście:"/>
+                                        <Label Content="{Binding Price}"/>
+                                        <Label Content="Waluta"/>
+                                        <ComboBox ItemsSource="{Binding Source={StaticResource Currencies}}" SelectedItem="{Binding Currency}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                            
+                            <GroupBox Header="Informacje kontaktowe">
+                                <StackPanel>
+                                    <Label Content="Telefon:"/>
+                                    <TextBox>
+                                        <TextBox.Text>
+                                            <Binding Path="PhoneNumber" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay" ValidatesOnDataErrors="True">
+                                                <Binding.ValidationRules>
+                                                    <local:PhoneNumberValidationRule/>
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                    <Label Content="Email:"/>
+                                    <TextBox>
+                                        <TextBox.Text>
+                                            <Binding Path="Email" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay" ValidatesOnDataErrors="True">
+                                                <Binding.ValidationRules>
+                                                    <local:EmailValidationRule/>
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                    <Label Content="Strona internetowa:"/>
+                                    <TextBox Text="{Binding Website}"/>
+                                </StackPanel>
+                            </GroupBox>
+                            
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+                
+                <GroupBox Grid.Row="1" Header="Notes">
+                    <TextBox MaxLength="500" TextWrapping="Wrap"/>
+                </GroupBox>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
